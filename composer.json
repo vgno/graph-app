@@ -1,0 +1,15 @@
+{
+    "name": "vgno/graph-app",
+    "description": "Prototype app for graph database and recommendation app",
+    "require": {
+        "silex/silex": "2.0.*@dev"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kristoffer Brabrand",
+            "email": "kristoffer.brabrand@vg.no"
+        }
+    ],
+    "minimum-stability": "dev"
+}
