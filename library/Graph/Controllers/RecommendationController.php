@@ -24,12 +24,12 @@ class RecommendationController {
         }
 
         $recommended = new Query($app['neo4j'], sprintf('
-            MATCH (article)<-[:read]-(user)-[:read]->(articleA)
+            MATCH (article:article)<-[:read]-(user:ip)-[:read]->(recommended:article)
             WHERE article.articleId = %d
             RETURN
-                articleA.articleId as articleId,
-                articleA.title as title,
-                count(articleA) as reads
+                recommended.articleId as articleId,
+                recommended.title as title,
+                count(*) as reads
             ORDER BY reads DESC
             LIMIT %d', $articleId, $limit));
 
