@@ -2,7 +2,7 @@
     "name": "vgno/graph-app",
     "description": "Prototype app for graph database and recommendation app",
     "require": {
-        "silex/silex": "2.0.*@dev",
+        "silex/silex": "~1.0",
         "kbrabrand/silex-neo4j": "~1.0"
     },
     "license": "MIT",
