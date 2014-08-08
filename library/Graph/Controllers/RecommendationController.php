@@ -42,6 +42,8 @@ class RecommendationController {
             ];
         }
 
-        return $app->json($result);
+        return $app->json($result, 200, [
+            'Cache-Control' => 'max-age=300'
+        ]);
     }
 }
