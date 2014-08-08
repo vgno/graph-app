@@ -23,15 +23,21 @@ class RecommendationController {
             $limit = (int) $_GET['limit'];
         }
 
-        $recommended = new Query($app['neo4j'], sprintf('
-            MATCH (article:article)<-[:read]-(user:ip)-[:read]->(recommended:article)
-            WHERE article.articleId = %d
+        $recommended = new Query(
+            $app['neo4j'],
+            'MATCH (article:article)<-[:read]-(user:ip)-[:read]->(recommended:article)
+            WHERE article.articleId = {articleId}
             RETURN
                 recommended.articleId as articleId,
                 recommended.title as title,
                 count(*) as reads
             ORDER BY reads DESC
-            LIMIT %d', $articleId, $limit));
+            LIMIT {limit}',
+            [
+                'articleId' => $articleId,
+                'limit'     => $limit
+            ]
+        );
 
         $result = [];
 
