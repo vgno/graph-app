@@ -1,10 +1,6 @@
 {
     "name": "vgno/graph-app",
     "description": "Prototype app for graph database and recommendation app",
-    "require": {
-        "silex/silex": "~1.0",
-        "kbrabrand/silex-neo4j": "~1.0"
-    },
     "license": "MIT",
     "authors": [
         {
@@ -18,5 +14,10 @@
             "Graph": "library",
             "GraphTest": "tests"
         }
+    },
+    "require": {
+        "silex/silex": "~1.0",
+        "kbrabrand/silex-neo4j": "~1.0",
+        "mheap/silex-memcache": "dev-master"
     }
 }

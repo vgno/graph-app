@@ -4,6 +4,8 @@ namespace Graph;
 
 use KBrabrand\Silex\Provider\Neo4jServiceProvider;
 
+use SilexMemcache\MemcacheExtension;
+
 use Symfony\Component\HttpFoundation\JsonResponse,
     Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\Response;
@@ -17,10 +19,15 @@ class Application extends \Silex\Application {
     }
 
     public function bootstrap() {
-        $this->register(new Neo4jServiceProvider(), array(
+        $this->register(new Neo4jServiceProvider(), [
             'neo4j.transport' => 'vg-neo4j-01',
             'neo4j.port'      => 7474,
-        ));
+        ]);
+
+        $this->register(new MemcacheExtension(), [
+            'memcache.library' => 'memcached',
+            'memcache.server'  => $this['config']['memcache']['hosts']
+        ]);
 
         $this->after(function(Request $req, Response $res) {
             $callback = $req->get('callback');
@@ -34,7 +41,8 @@ class Application extends \Silex\Application {
             }
         });
 
-        $this->get('/recommended/{articleId}',  'Graph\Controllers\RecommendationController::thoseWhoReadalsoReadAction');
+        $this->get('/recommended/{articleId}', 'Graph\Controllers\RecommendationController::thoseWhoReadalsoReadAction');
+        $this->post('/detectEntities',         'Graph\Controllers\EntityController::detectEntitiesAction');
 
         return $this;
     }

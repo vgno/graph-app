@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a7410729808fba4301e93606ccbe72d7",
+    "hash": "073ed2e84dc8fefb79ff2ad9d6da1f28",
     "packages": [
         {
             "name": "everyman/neo4jphp",
@@ -96,6 +96,56 @@
             ],
             "description": "Neo4j service provider for Silex",
             "time": "2014-08-07 14:31:31"
+        },
+        {
+            "name": "mheap/silex-memcache",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mheap/Silex-Memcache.git",
+                "reference": "e187625edb89e8809094f314fc641deadc5fe92b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mheap/Silex-Memcache/zipball/e187625edb89e8809094f314fc641deadc5fe92b",
+                "reference": "e187625edb89e8809094f314fc641deadc5fe92b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "silex/silex": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "SilexMemcache": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sven Eisenschmidt",
+                    "email": "sven.eisenschmidt@gmail.com",
+                    "homepage": "http://unsicherheitsagent.de/"
+                },
+                {
+                    "name": "Michael Heap",
+                    "email": "m@michaelheap.com",
+                    "homepage": "http://michaelheap.com/"
+                }
+            ],
+            "description": "Memcache extension for Silex",
+            "homepage": "https://github.com/mheap/Silex-Memcache",
+            "keywords": [
+                "memcache",
+                "silex"
+            ],
+            "time": "2013-07-24 09:56:33"
         },
         {
             "name": "pimple/pimple",
@@ -583,7 +633,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "mheap/silex-memcache": 20
+    },
     "platform": [],
     "platform-dev": []
 }
