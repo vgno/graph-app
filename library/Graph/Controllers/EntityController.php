@@ -11,7 +11,11 @@ use Everyman\Neo4j\Cypher\Query;
 
 class EntityController {
     public function detectEntitiesAction(Request $req, Application $app) {
-        $cacheKey = 'graph::entityExtraction::entityData';
+        $cacheKey = 'graph::entityExtraction::entiasdyData';
+
+        // Batching options for neo4j
+        $limit = 500;
+        $offset = 0;
 
         $body = $req->getContent();
 
@@ -22,63 +26,72 @@ class EntityController {
         $entityData = $app['memcache']->get($cacheKey);
 
         if (!$entityData) {
-            // Get entities
-            $entityResult = new Query(
-                $app['neo4j'],
-                'MATCH (topic:topic)
-                WHERE
-                    NOT ("standard" IN labels(topic) OR "generell" IN labels(topic))
-                RETURN
-                    labels(topic) as labels,
-                    topic.name as name,
-                    topic.topicId as topicId;'
-            );
-
-            $entities = [];
-
+            $entities           = [];
             $singleWordEntities = [];
             $multiWordEntities  = [];
 
-            foreach ($entityResult->getResultSet() as $row) {
-                $key = trim(strtolower($row['name']));
+            // Get entities
+            do {
+                $entityQuery = new Query(
+                    $app['neo4j'],
+                    'MATCH (topic:topic {remoteType: "tag"})
+                    RETURN
+                        labels(topic) as labels,
+                        topic.name as name,
+                        topic.topicId as topicId
+                    SKIP {skip}
+                    LIMIT {limit}',
+                    [
+                        'limit' => $limit,
+                        'skip'  => $offset
+                    ]
+                );
 
-                // We don't need them empty strings..
-                if (!$key) {
-                    continue;
-                }
+                $resultSet = $entityQuery->getResultSet();
 
-                $singleWordEntity = stripos($key, ' ') === false;
+                foreach ($resultSet as $row) {
+                    $key = trim(strtolower($row['name']));
 
-                // Skip if we've got this already
-                if ($singleWordEntity && in_array($key, $singleWordEntities)) {
-                    continue;
-                } else if (!$singleWordEntity && in_array($key, $multiWordEntities)) {
-                    continue;
-                }
-
-                $type = '';
-
-                foreach ($row['labels'] as $label) {
-                    if ($label == 'topic') {
+                    // We don't need them empty strings..
+                    if (!$key) {
                         continue;
                     }
 
-                    $type = $label;
-                    break;
+                    $singleWordEntity = stripos($key, ' ') === false;
+
+                    // Skip if we've got this already
+                    if ($singleWordEntity && in_array($key, $singleWordEntities)) {
+                        continue;
+                    } else if (!$singleWordEntity && in_array($key, $multiWordEntities)) {
+                        continue;
+                    }
+
+                    $type = '';
+
+                    foreach ($row['labels'] as $label) {
+                        if ($label == 'topic') {
+                            continue;
+                        }
+
+                        $type = $label;
+                        break;
+                    }
+
+                    $entities[$key] = [
+                        'type' => $type,
+                        'id'   => (int) $row['topicId'],
+                        'name' => $row['name']
+                    ];
+
+                    if ($singleWordEntity) {
+                        $singleWordEntities[] = $key;
+                    } else {
+                        $multiWordEntities[] = $key;
+                    }
                 }
 
-                $entities[$key] = [
-                    'type' => $type,
-                    'id'   => (int) $row['topicId'],
-                    'name' => $row['name']
-                ];
-
-                if ($singleWordEntity) {
-                    $singleWordEntities[] = $key;
-                } else {
-                    $multiWordEntities[] = $key;
-                }
-            }
+                $offset += $limit;
+            } while (count($resultSet) === $limit);
 
             $app['memcache']->set($cacheKey, [
                 'multi'  => $multiWordEntities,
@@ -106,7 +119,7 @@ class EntityController {
         // Search the text for multi word entities
         foreach ($multiWordEntities as $entity) {
             if (in_array($entity, $textWords)) {
-                $entitiesInText[] = $entity;
+                $entitiesInText[$entity] = $entity;
             }
         }
 
@@ -115,9 +128,26 @@ class EntityController {
             return $entities[$entity];
         }, $entitiesInText);
 
-        // Reset index values
-        $entitiesInText = array_values($entitiesInText);
+        // Get unrecognized named entities
+        preg_match_all('/(([A-ZÆØÅ][-a-zA-ZÆØÅæøå]+[ .,!]){2,})/', $body, $matchedEntities);
 
-        return $app->json($entitiesInText, 200);
+        $unknownEntities = [];
+
+        // Filter out the ones we have already before adding to list of unknown entities
+        foreach ($matchedEntities as $entity) {
+            $entity = trim($entity[0], ',.-!:;– ');
+            $key    = mb_convert_case($entity, MB_CASE_LOWER);
+
+            if (isset($entitiesInText[$key]) || in_array($entity, $unknownEntities)) {
+                continue;
+            }
+
+            $unknownEntities[] = $entity;
+        }
+
+        return $app->json([
+            'knownEntities' => $entitiesInText,
+            'unknownEntities' => $unknownEntities
+        ], 200);
     }
 }
