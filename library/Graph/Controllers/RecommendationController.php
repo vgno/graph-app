@@ -40,7 +40,7 @@ class RecommendationController {
                 'MATCH (article:article)<-[:read]-(user:ip)-[:read]->(recommended:article)<-[:listed]-(topic:topic)
                 WHERE
                     article.articleId = {articleId}
-                    AND topic.topicId IN [' . implode(',', $topics) . ']
+                    AND topic.topicId IN {topics}
                 RETURN
                     recommended.articleId as articleId,
                     recommended.title as title,
@@ -49,7 +49,8 @@ class RecommendationController {
                 LIMIT {limit}',
                 [
                     'articleId' => $articleId,
-                    'limit'     => $limit
+                    'limit'     => $limit,
+                    'topics'    => $topics
                 ]
             );
         } else {
