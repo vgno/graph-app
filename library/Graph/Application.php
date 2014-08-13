@@ -43,6 +43,7 @@ class Application extends \Silex\Application {
 
         $this->get('/recommended/{articleId}', 'Graph\Controllers\RecommendationController::thoseWhoReadalsoReadAction');
         $this->post('/detectEntities',         'Graph\Controllers\EntityController::detectEntitiesAction');
+        $this->get('/suggestEntities',         'Graph\Controllers\EntityController::suggestEntitiesAction');
 
         return $this;
     }

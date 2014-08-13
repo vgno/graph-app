@@ -179,4 +179,51 @@ class EntityController {
             'unknownEntities' => $unknownEntities
         ], 200);
     }
+
+    public function suggestEntitiesAction(Request $req, Application $app) {
+        $limit     = 10;
+        $topics    = isset($_GET['topic']) ? $_GET['topic'] : [];
+
+        if (isset($_GET['limit']) && is_numeric($_GET['limit']) && $_GET['limit'] < 100) {
+            $limit = (int) $_GET['limit'];
+        }
+
+        $topics = is_string($topics) ? explode(',', $topics) : $topics;
+
+        $topics = array_map('intval', array_filter($topics, 'is_numeric'));
+
+        $result = [];
+
+        // Filtering on topics
+        if (count($topics)) {
+            $recommended = new Query(
+                $app['neo4j'],
+                'MATCH
+                    (n:topic)-[:listed]->(a:article)<-[:listed]-(t:topic)
+                WHERE n.topicId IN {topics}
+                RETURN
+                    t.topicId as topicId,
+                    t.name as name,
+                    count(1) as mentions
+                ORDER BY mentions DESC
+                LIMIT {limit}',
+                [
+                    'limit'     => $limit,
+                    'topics'    => $topics
+                ]
+            );
+
+            foreach ($recommended->getResultSet() as $row) {
+                $result[] = [
+                    'id'    => $row['topicId'],
+                    'name'  => $row['name'],
+                    'mentions' => $row['mentions'],
+                ];
+            }
+        }
+
+        return $app->json($result, 200, [
+            'Cache-Control' => 'max-age=300'
+        ]);
+    }
 }
