@@ -129,13 +129,13 @@ class EntityController {
         }, $entitiesInText);
 
         // Get unrecognized named entities
-        preg_match_all('/(([A-ZÆØÅ][-a-zA-ZÆØÅæøå]+[ .,!]){2,})/', $body, $matchedEntities);
+        preg_match_all('/([A-Z][a-z]+(?=\s[A-Z])(?:\s[A-Z][a-z]+)+)/', $body, $matchedEntities);
 
         $unknownEntities = [];
 
         // Filter out the ones we have already before adding to list of unknown entities
-        foreach ($matchedEntities as $entity) {
-            $entity = trim($entity[0], ',.-!:;– ');
+        foreach ($matchedEntities[0] as $entity) {
+            $entity = $entity;
             $key    = mb_convert_case($entity, MB_CASE_LOWER);
 
             if (isset($entitiesInText[$key]) || in_array($entity, $unknownEntities)) {
