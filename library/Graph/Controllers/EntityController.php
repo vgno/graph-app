@@ -176,7 +176,7 @@ class EntityController {
         }
 
         return $app->json([
-            'knownEntities' => $entitiesInText,
+            'knownEntities' => array_values($entitiesInText),
             'unknownEntities' => $unknownEntities
         ], 200);
     }
