@@ -129,13 +129,20 @@ class EntityController {
         }, $entitiesInText);
 
         // Get unrecognized named entities
-        preg_match_all('/([A-Z][a-z]+(?=\s[A-Z])(?:\s[A-Z][a-z]+)+)/', $body, $matchedEntities);
+        preg_match_all('/([A-ZÆØÅ][a-zæøå]+(?=\s[A-ZÆØÅ])(?:\s[A-ZÆØÅ][a-zæøå]+)+)|[\n ]+([A-ZÆØÅ]{2,})/u', $body, $matchedEntities);
+
+        // Make shure the indexes are there before merging
+        if (!isset($matchedEntities[1])) { $matchedEntities[1] = []; }
+        if (!isset($matchedEntities[2])) { $matchedEntities[2] = []; }
+
+        // Merge resultset containing consecutive capitalized words and uppercase words
+        $matchedEntities = array_filter(array_merge($matchedEntities[1], $matchedEntities[2]));
+        $matchedEntities = array_unique($matchedEntities);
 
         $unknownEntities = [];
 
         // Filter out the ones we have already before adding to list of unknown entities
-        foreach ($matchedEntities[0] as $entity) {
-            $entity = $entity;
+        foreach ($matchedEntities as $entity) {
             $key    = mb_convert_case($entity, MB_CASE_LOWER);
 
             if (isset($entitiesInText[$key]) || in_array($entity, $unknownEntities)) {
