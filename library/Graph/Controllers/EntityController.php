@@ -111,8 +111,9 @@ class EntityController {
         }
 
         // Simple body text wash
-        $textWords = str_replace("\n", '', $body);
-        $textWords = mb_convert_case($textWords, MB_CASE_LOWER);
+        $lowecaseBody = mb_convert_case($body, MB_CASE_LOWER);
+
+        $textWords = str_replace("\n", ' ', $lowecaseBody);
         $textWords = explode(' ', $textWords);
 
         $textWords = array_unique(array_map(function($string) {
@@ -136,7 +137,7 @@ class EntityController {
                 continue;
             }
 
-            if (in_array($entity, $textWords)) {
+            if (stripos($lowecaseBody, $entity) !== false) {
                 $entitiesInText[$entity] = $entity;
             }
         }
