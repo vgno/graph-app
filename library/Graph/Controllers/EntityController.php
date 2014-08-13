@@ -10,8 +10,14 @@ use Symfony\Component\HttpFoundation\Request,
 use Everyman\Neo4j\Cypher\Query;
 
 class EntityController {
+    protected function isBlacklisted($string) {
+        return in_array($string, [
+            'vg'
+        ]);
+    }
+
     public function detectEntitiesAction(Request $req, Application $app) {
-        $cacheKey = 'graph::entityExtraction::entiasdyData';
+        $cacheKey = 'graph::entityExtraction::entitiesData';
 
         // Batching options for neo4j
         $limit = 500;
@@ -106,7 +112,7 @@ class EntityController {
 
         // Simple body text wash
         $textWords = str_replace("\n", '', $body);
-        $textWords = strtolower($textWords);
+        $textWords = mb_convert_case($textWords, MB_CASE_LOWER);
         $textWords = explode(' ', $textWords);
 
         $textWords = array_unique(array_map(function($string) {
@@ -114,10 +120,22 @@ class EntityController {
         }, $textWords));
 
         // Intersect words in text with the single word entities
-        $entitiesInText = array_intersect($textWords, $singleWordEntities);
+        $entitiesInText = [];
+
+        foreach (array_intersect($textWords, $singleWordEntities) as $entity) {
+            if ($this->isBlacklisted($entity)) {
+                continue;
+            }
+
+            $entitiesInText[$entity] = $entity;
+        }
 
         // Search the text for multi word entities
         foreach ($multiWordEntities as $entity) {
+            if ($this->isBlacklisted($entity)) {
+                continue;
+            }
+
             if (in_array($entity, $textWords)) {
                 $entitiesInText[$entity] = $entity;
             }
@@ -128,8 +146,8 @@ class EntityController {
             return $entities[$entity];
         }, $entitiesInText);
 
-        // Get unrecognized named entities
-        preg_match_all('/([A-ZÆØÅ][a-zæøå]+(?=\s[A-ZÆØÅ])(?:\s[A-ZÆØÅ][a-zæøå]+)+)|[\n ]+([A-ZÆØÅ]{2,})/u', $body, $matchedEntities);
+        // Find named entities
+        preg_match_all('/([A-ZÆØÅ][a-zæøå]+(?=\s[A-ZÆØÅ])(?:\s[A-ZÆØÅ][a-zæøå]+)+)|[\n ]+([A-ZÆØÅ][A-ZÆØÅ0-9]{2,})/u', $body, $matchedEntities);
 
         // Make shure the indexes are there before merging
         if (!isset($matchedEntities[1])) { $matchedEntities[1] = []; }
@@ -143,9 +161,13 @@ class EntityController {
 
         // Filter out the ones we have already before adding to list of unknown entities
         foreach ($matchedEntities as $entity) {
-            $key    = mb_convert_case($entity, MB_CASE_LOWER);
+            $key = mb_convert_case($entity, MB_CASE_LOWER);
 
             if (isset($entitiesInText[$key]) || in_array($entity, $unknownEntities)) {
+                continue;
+            }
+
+            if ($this->isBlacklisted($key)) {
                 continue;
             }
 
