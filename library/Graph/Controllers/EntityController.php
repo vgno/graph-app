@@ -17,7 +17,7 @@ class EntityController {
     }
 
     public function detectEntitiesAction(Request $req, Application $app) {
-        $cacheKey = 'graph::entityExtraction::entitiesData';
+        $cacheKey = 'graph::entityExtraction::entityData';
 
         // Batching options for neo4j
         $limit = 500;
