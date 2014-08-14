@@ -203,6 +203,7 @@ class EntityController {
                 RETURN
                     t.topicId as topicId,
                     t.name as name,
+                    t.remoteType,
                     count(1) as mentions
                 ORDER BY mentions DESC
                 LIMIT {limit}',
@@ -216,6 +217,7 @@ class EntityController {
                 $result[] = [
                     'id'    => $row['topicId'],
                     'name'  => $row['name'],
+                    'remoteType' => $row['remoteType'],
                     'mentions' => $row['mentions'],
                 ];
             }
