@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "073ed2e84dc8fefb79ff2ad9d6da1f28",
+    "hash": "89184fdf093b99bc57923b9994f043a6",
     "packages": [
         {
             "name": "everyman/neo4jphp",
@@ -54,6 +54,56 @@
                 "neo4j"
             ],
             "time": "2014-05-10 01:59:00"
+        },
+        {
+            "name": "jdesrosiers/silex-cors-provider",
+            "version": "0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jdesrosiers/silex-cors-provider.git",
+                "reference": "d157466a40bd615f8cbc7158e930118f7e69a772"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jdesrosiers/silex-cors-provider/zipball/d157466a40bd615f8cbc7158e930118f7e69a772",
+                "reference": "d157466a40bd615f8cbc7158e930118f7e69a772",
+                "shasum": ""
+            },
+            "require": {
+                "silex/silex": "~1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*",
+                "symfony/browser-kit": "2.3.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "JDesrosiers": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jason Desrosiers",
+                    "email": "jdesrosi@gmail.com"
+                }
+            ],
+            "description": "A silex service provider that adds CORS services to silex",
+            "keywords": [
+                "cors",
+                "cross",
+                "origin",
+                "provider",
+                "resource",
+                "service",
+                "sharing",
+                "silex"
+            ],
+            "time": "2014-08-08 03:28:29"
         },
         {
             "name": "kbrabrand/silex-neo4j",
@@ -499,12 +549,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpKernel.git",
-                "reference": "b4a977d5dc76928acf7b4b0cf4f9711ba114ffe7"
+                "reference": "c90d1811e3ed2f119de61aa63e7044cd5ca422a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/b4a977d5dc76928acf7b4b0cf4f9711ba114ffe7",
-                "reference": "b4a977d5dc76928acf7b4b0cf4f9711ba114ffe7",
+                "url": "https://api.github.com/repos/symfony/HttpKernel/zipball/c90d1811e3ed2f119de61aa63e7044cd5ca422a7",
+                "reference": "c90d1811e3ed2f119de61aa63e7044cd5ca422a7",
                 "shasum": ""
             },
             "require": {
@@ -512,7 +562,7 @@
                 "psr/log": "~1.0",
                 "symfony/debug": "~2.5",
                 "symfony/event-dispatcher": "~2.5",
-                "symfony/http-foundation": "~2.4"
+                "symfony/http-foundation": "~2.5"
             },
             "require-dev": {
                 "symfony/browser-kit": "~2.2",
@@ -561,7 +611,7 @@
             ],
             "description": "Symfony HttpKernel Component",
             "homepage": "http://symfony.com",
-            "time": "2014-08-06 08:24:10"
+            "time": "2014-08-11 09:10:42"
         },
         {
             "name": "symfony/routing",

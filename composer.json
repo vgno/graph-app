@@ -18,6 +18,7 @@
     "require": {
         "silex/silex": "~1.0",
         "kbrabrand/silex-neo4j": "~1.0",
-        "mheap/silex-memcache": "dev-master"
+        "mheap/silex-memcache": "dev-master",
+        "jdesrosiers/silex-cors-provider": "~0.1"
     }
 }
