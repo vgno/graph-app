@@ -31,9 +31,7 @@ class Application extends \Silex\Application {
             'memcache.server'  => $this['config']['memcache']['hosts']
         ]);
 
-        $this->register(new CorsServiceProvider(), [
-            'cors.allowOrigin' => $this['config']['cors']['allowOrigin'],
-        ])->after($this['cors']);
+        $this->register(new CorsServiceProvider(), []);
 
         $this->after(function(Request $req, Response $res) {
             $callback = $req->get('callback');
