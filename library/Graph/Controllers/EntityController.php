@@ -191,8 +191,6 @@ class EntityController {
 
         $topics = is_string($topics) ? explode(',', $topics) : $topics;
 
-        $topics = array_map('intval', array_filter($topics, 'is_numeric'));
-
         $result = [];
 
         // Filtering on topics
@@ -201,7 +199,7 @@ class EntityController {
                 $app['neo4j'],
                 'MATCH
                     (n:topic)-[:listed]->(a:article)<-[:listed]-(t:topic)
-                WHERE n.topicId IN {topics}
+                WHERE n.name IN {topics}
                 RETURN
                     t.topicId as topicId,
                     t.name as name,
