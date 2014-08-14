@@ -6,6 +6,8 @@ use KBrabrand\Silex\Provider\Neo4jServiceProvider;
 
 use SilexMemcache\MemcacheExtension;
 
+use JDesrosiers\Silex\Provider\CorsServiceProvider;
+
 use Symfony\Component\HttpFoundation\JsonResponse,
     Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\Response;
