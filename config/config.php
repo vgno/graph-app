@@ -10,7 +10,10 @@ return [
         ]
     ],
     'cors' => [
-        'allowOrigin' => 'https://publish-stage.vgnett.no',
-        'allowOrigin' => 'https://publish.vg.no',
+        'allowOrigin' => implode(' ', [
+            'https://publish-stage.vgnett.no',
+            'https://publish.vg.no',
+            'https://kribrabr.vgnett.no'
+        ])
     ],
 ];
