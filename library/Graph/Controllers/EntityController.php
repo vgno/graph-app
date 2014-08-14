@@ -44,7 +44,8 @@ class EntityController {
                     RETURN
                         labels(topic) as labels,
                         topic.name as name,
-                        topic.topicId as topicId
+                        topic.topicId as topicId,
+                        topic.tagTypeId as tagTypeId
                     SKIP {skip}
                     LIMIT {limit}',
                     [
@@ -84,9 +85,10 @@ class EntityController {
                     }
 
                     $entities[$key] = [
-                        'type' => $type,
-                        'id'   => (int) $row['topicId'],
-                        'name' => $row['name']
+                        'type'   => $type,
+                        'typeId' => $row['tagTypeId'],
+                        'id'     => (int) $row['topicId'],
+                        'name'   => $row['name']
                     ];
 
                     if ($singleWordEntity) {
@@ -203,7 +205,8 @@ class EntityController {
                 RETURN
                     t.topicId as topicId,
                     t.name as name,
-                    t.remoteType,
+                    t.remoteType as remoteType,
+                    t.tagTypeId as tagTypeId,
                     labels(t) as labels,
                     count(1) as mentions
                 ORDER BY mentions DESC
@@ -227,11 +230,12 @@ class EntityController {
                 }
 
                 $result[] = [
-                    'id'    => $row['topicId'],
-                    'name'  => $row['name'],
+                    'id'         => $row['topicId'],
+                    'name'       => $row['name'],
                     'remoteType' => $row['remoteType'],
-                    'type'  => $type,
-                    'mentions' => $row['mentions'],
+                    'type'       => $type,
+                    'typeId'     => $row['tagTypeId'],
+                    'mentions'   => $row['mentions'],
                 ];
             }
         }
