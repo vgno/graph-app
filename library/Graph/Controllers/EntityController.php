@@ -200,7 +200,7 @@ class EntityController {
             $recommended = new Query(
                 $app['neo4j'],
                 'MATCH
-                    (n:topic)-[:listed]->(a:article)<-[:listed]-(t:topic)
+                    (n:topic)-[:listed]->(a:article)<-[:listed]-(t:topic {remoteType: "tag"})
                 WHERE n.name IN {topics}
                 RETURN
                     t.topicId as topicId,
