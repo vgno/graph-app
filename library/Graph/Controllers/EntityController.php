@@ -204,6 +204,7 @@ class EntityController {
                     t.topicId as topicId,
                     t.name as name,
                     t.remoteType,
+                    labels(t) as labels,
                     count(1) as mentions
                 ORDER BY mentions DESC
                 LIMIT {limit}',
@@ -214,10 +215,22 @@ class EntityController {
             );
 
             foreach ($recommended->getResultSet() as $row) {
+                $type = '';
+
+                foreach ($row['labels'] as $label) {
+                    if ($label == 'topic') {
+                        continue;
+                    }
+
+                    $type = $label;
+                    break;
+                }
+
                 $result[] = [
                     'id'    => $row['topicId'],
                     'name'  => $row['name'],
                     'remoteType' => $row['remoteType'],
+                    'type'  => $type,
                     'mentions' => $row['mentions'],
                 ];
             }
