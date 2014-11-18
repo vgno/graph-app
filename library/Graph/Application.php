@@ -22,8 +22,8 @@ class Application extends \Silex\Application {
 
     public function bootstrap() {
         $this->register(new Neo4jServiceProvider(), [
-            'neo4j.transport' => 'vg-neo4j-01',
-            'neo4j.port'      => 7474,
+            'neo4j.transport' => $this['config']['neo4j']['transport'],
+            'neo4j.port'      => $this['config']['neo4j']['port'],
         ]);
 
         $this->register(new MemcacheExtension(), [
